@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, TrendingUp, TrendingDown, MoreVertical } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
-import { Button } from './ui/button';
+
 
 export function PortfolioScreen() {
   const [selectedView, setSelectedView] = useState<'overview' | 'detailed'>('overview');
