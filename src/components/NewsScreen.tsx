@@ -40,6 +40,7 @@ export function NewsScreen() {
   const displayedNews = selectedCategory === '전체'
     ? news.slice(0, 3)
     : news.filter((item) => item.category === selectedCategory);
+    setSelectedCategory;
   const weightClassMap: Record<number, string> = {
     1: 'text-[6pt] px-2 py-1 bg-zinc-800 text-zinc-300 rounded-full',
     2: 'text-[6pt] px-3 py-1 bg-zinc-800 text-zinc-200 rounded-full',
