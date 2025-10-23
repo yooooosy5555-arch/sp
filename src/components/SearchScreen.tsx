@@ -383,7 +383,7 @@ export function SearchScreen() {
 
               {/* 경쟁사 박스 (위) */}
               <g>
-                <rect x={260} y={10} width={180} height={170} rx={8} fill="#3b82f6" opacity={0.1} stroke="#3b82f6" strokeWidth={2} strokeDasharray="5,5" />
+                <rect x={260} y={-180+((valueChainData['upstream']).length)*50} width={180} height={((valueChainData['related']).length+1)*70} rx={8} fill="#3b82f6" opacity={0.1} stroke="#3b82f6" strokeWidth={2} strokeDasharray="5,5" />
                 <text x={350} y={30} textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">
                   동일 산업 (경쟁사)
                 </text>
@@ -423,7 +423,7 @@ export function SearchScreen() {
 
               {/* 하류 박스 (오른쪽) */}
               <g>
-                <rect x={500} y={100} width={180} height={280} rx={8} fill="#10b981" opacity={0.1} stroke="#10b981" strokeWidth={2} />
+                <rect x={500} y={100} width={180} height={((valueChainData['downstream']).length+1)*70} rx={8} fill="#10b981" opacity={0.1} stroke="#10b981" strokeWidth={2} />
                 <text x={590} y={125} textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">
                   하류 (고객사)
                 </text>
