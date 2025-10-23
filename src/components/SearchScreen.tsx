@@ -241,7 +241,7 @@ export function SearchScreen() {
                 
                 const nodeRadius = 15 + stock.correlation * 10;
                 const opacity = 0.3 + stock.correlation * 0.7;
-                const hue = stock.correlation * 120; // 0 (red) to 120 (red for high correlation)
+                // const hue = stock.correlation * 120; // 0 (red) to 120 (red for high correlation)
                 const color = `hsl(0, ${stock.correlation * 100}%, ${50 + (1 - stock.correlation) * 30}%)`;
                 
                 return (
