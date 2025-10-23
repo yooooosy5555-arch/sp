@@ -12,7 +12,6 @@ import { BottomNav } from './components/BottomNav';
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'profile' | 'dashboard' | 'stockpicker' | 'stockcast' | 'portfolio' | 'news' | 'search'>('login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userStocks, setUserStocks] = useState<any[]>([]);
 
   const handleLogin = () => {
@@ -25,6 +24,7 @@ export default function App() {
   };
 
   const handleStockPickerComplete = (stocks: any[]) => {
+    userStocks;
     setUserStocks(stocks);
     setCurrentScreen('search');
   };
