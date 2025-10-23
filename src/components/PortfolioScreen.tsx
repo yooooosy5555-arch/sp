@@ -11,7 +11,7 @@ export function PortfolioScreen() {
   const totalProfit = totalAssets - totalInvestment;
   const totalProfitRate = (totalProfit / totalInvestment) * 100;
   const totalReturn = totalProfitRate;
-
+  totalReturn;
   const portfolioData = [
     { 
       name: 'AAPL', 
