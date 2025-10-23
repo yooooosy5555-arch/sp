@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Bell, MessageSquare, PlusCircle } from 'lucide-react';
 
 export function DashboardScreen(): JSX.Element {
