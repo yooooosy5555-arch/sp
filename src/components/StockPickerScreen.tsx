@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, Check, TrendingUp, TrendingDown, X } from 'lucide-react';
+import { Search, Check, TrendingUp, TrendingDown, X } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface Stock {
