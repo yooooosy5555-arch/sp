@@ -3,7 +3,6 @@ import { Search, ArrowLeft, TrendingUp, TrendingDown, Clock } from 'lucide-react
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, BarChart, Bar, Legend } from 'recharts';
 import { PinchZoom } from "./ui/PinchZoom";
 
-
 type MainTabType = 'price' | 'correlation' | 'keywords' | 'valuechain' | 'community';
 type FinancialTabType = 'revenue' | 'income';
 
@@ -88,12 +87,12 @@ export function SearchScreen() {
 
   // 연관어 데이터
   const keywords = [
-    { text: 'AI반도체', count: 400, trend: 'up' },
+    { text: 'AI반도체', count: 1250, trend: 'up' },
     { text: 'HBM', count: 980, trend: 'up' },
     { text: '엔비디아', count: 856, trend: 'up' },
-    { text: '실적발표', count: 500, trend: 'neutral' },
-    { text: '메모리반도체', count: 300, trend: 'up' },
-    { text: '파운드리', count: 200, trend: 'neutral' },
+    { text: '실적발표', count: 734, trend: 'neutral' },
+    { text: '메모리반도체', count: 621, trend: 'up' },
+    { text: '파운드리', count: 543, trend: 'neutral' },
     { text: '삼성바이오', count: 432, trend: 'down' },
     { text: '투자확대', count: 389, trend: 'up' },
     { text: '시장점유율', count: 321, trend: 'neutral' },
@@ -174,98 +173,117 @@ export function SearchScreen() {
     { id: 'income', label: '손익계산서' },
   ];
 
-  const renderCorrelationMindMap = () => {
-  if (!selectedStock) return null;
+    const renderCorrelationMindMap = () => {
+    if (!selectedStock) return null;
 
-  const centerX = 200;
-  const centerY = 200;
-  const radius = 150;
+    const centerX = 200;
+    const centerY = 200;
+    const radius = 150;
 
     return (
-    <div className="mb-6">
-      <h3 className="text-sm text-zinc-400 mb-3">상관계수</h3>
-      <div className="bg-zinc-900 rounded-2xl p-6 overflow-x-auto scrollbar-hide">
-        <PinchZoom>
-          <svg width="400" height="400" className="mx-auto" style={{ touchAction: "none" }}>
-            {/* 연결선 */}
-            {correlationData.map((stock, index) => {
-              const angle = (index / correlationData.length) * 2 * Math.PI;
-              const distance = radius * (1 - stock.correlation * 0.5);
-              const x = centerX + Math.cos(angle) * distance;
-              const y = centerY + Math.sin(angle) * distance;
-              const opacity = stock.correlation;
-              const color = `rgba(239, 68, 68, ${opacity})`;
-              return (
-                <line
-                  key={`line-${index}`}
-                  x1={centerX}
-                  y1={centerY}
-                  x2={x}
-                  y2={y}
-                  stroke={color}
-                  strokeWidth={2 * stock.correlation}
-                  opacity={0.6}
+      <div className="mb-6">
+        <h3 className="text-sm text-zinc-400 mb-3">상관계수</h3>
+        <div className="bg-zinc-900 rounded-2xl p-6 overflow-x-auto scrollbar-hide">
+          <PinchZoom>
+            <svg width="400" height="400" className="mx-auto">
+              {/* 연결선 */}
+              {correlationData.map((stock, index) => {
+                const angle = (index / correlationData.length) * 2 * Math.PI;
+                const distance = radius * (1 - stock.correlation * 0.5);
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                const opacity = stock.correlation;
+                const color = `rgba(239, 68, 68, ${opacity})`;
+                
+                return (
+                  <line
+                    key={`line-${index}`}
+                    x1={centerX}
+                    y1={centerY}
+                    x2={x}
+                    y2={y}
+                    stroke={color}
+                    strokeWidth={2 * stock.correlation}
+                    opacity={0.6}
+                  />
+                );
+              })}
+
+              {/* 중심 노드 (선택된 종목) */}
+              <g>
+                <circle
+                  cx={centerX}
+                  cy={centerY}
+                  r={30}
+                  fill="#3b82f6"
+                  className="cursor-pointer hover:fill-blue-400 transition-colors"
                 />
-              );
-            })}
+                <text
+                  x={centerX}
+                  y={centerY}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="white"
+                  fontSize="14"
+                  fontWeight="bold"
+                >
+                  {selectedStock.name}
+                </text>
+              </g>
 
-            {/* 중심 노드 */}
-            <g>
-              <circle
-                cx={centerX}
-                cy={centerY}
-                r={30}
-                fill="#3b82f6"
-                className="cursor-pointer hover:fill-blue-400 transition-colors"
-              />
-              <text
-                x={centerX}
-                y={centerY}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="white"
-                fontSize="14"
-                fontWeight="bold"
-              >
-                {selectedStock.name}
-              </text>
-            </g>
-
-            {/* 상관 종목 노드 */}
-            {correlationData.map((stock, index) => {
-              const angle = (index / correlationData.length) * 2 * Math.PI;
-              const distance = radius * (1 - stock.correlation * 0.5);
-              const x = centerX + Math.cos(angle) * distance;
-              const y = centerY + Math.sin(angle) * distance;
-              const nodeRadius = 15 + stock.correlation * 10;
-              const opacity = 0.3 + stock.correlation * 0.7;
-              const color = `hsl(0, ${stock.correlation * 100}%, ${50 + (1 - stock.correlation) * 30}%)`;
-              return (
-                <g key={`node-${index}`} className="cursor-pointer hover:opacity-80 transition-opacity">
-                  <circle cx={x} cy={y} r={nodeRadius} fill={color} opacity={opacity} />
-                  <text
-                    x={x}
-                    y={y - nodeRadius - 5}
-                    textAnchor="middle"
-                    fill="white"
-                    fontSize="11"
-                    fontWeight="500"
-                  >
-                    {stock.name}
-                  </text>
-                  <text x={x} y={y + nodeRadius + 15} textAnchor="middle" fill="#a1a1aa" fontSize="10">
-                    {stock.correlation.toFixed(2)}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-        </PinchZoom>
+              {/* 상관 종목 노드 */}
+              {correlationData.map((stock, index) => {
+                const angle = (index / correlationData.length) * 2 * Math.PI;
+                const distance = radius * (1 - stock.correlation * 0.5);
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                const nodeRadius = 15 + stock.correlation * 10;
+                const opacity = 0.3 + stock.correlation * 0.7;
+                const hue = stock.correlation * 120; // 0 (red) to 120 (red for high correlation)
+                const color = `hsl(0, ${stock.correlation * 100}%, ${50 + (1 - stock.correlation) * 30}%)`;
+                
+                return (
+                  <g key={`node-${index}`} className="cursor-pointer hover:opacity-80 transition-opacity">
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r={nodeRadius}
+                      fill={color}
+                      opacity={opacity}
+                    />
+                    <text
+                      x={x}
+                      y={y+2}
+                      textAnchor="middle"
+                      fill="white"
+                      fontSize="11"
+                      fontWeight="500"
+                    >
+                      {stock.name}
+                    </text>
+                    <text
+                      x={x}
+                      y={y + nodeRadius + 15}
+                      textAnchor="middle"
+                      fill="#a1a1aa"
+                      fontSize="10"
+                    >
+                      {stock.correlation.toFixed(2)}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          </PinchZoom>
+        </div>
       </div>
-    </div>
-    )
-  };     
-    // --- 연관어 워드맵 업데이트 --- //
+    );
+  };
+
+  
+  // 연관어 워드맵 렌더링
   const renderKeywordWordMap = () => {
     // 워드 클라우드 배치 알고리즘
     const maxCount = Math.max(...keywords.map(k => k.count));
@@ -320,113 +338,139 @@ export function SearchScreen() {
     );
   };
 
+  // 가치사슬 마인드맵 렌더링
+  const renderValueChainMindMap = () => {
+    if (!selectedStock) return null;
 
-// --- 가치사슬 마인드맵 렌더링 ---
-const renderValueChainMindMap = () => {
-  if (!selectedStock) return null;
+    return (
+      <div className="mb-6">
+        <h3 className="text-sm text-zinc-400 mb-3">가치사슬 네트워크</h3>
+        <div className="bg-zinc-900 rounded-2xl p-4 overflow-x-auto scrollbar-hide">
+          <PinchZoom>
+            <svg viewBox="0 0 700 500" className="w-full h-auto">
+              {/* 상류 박스 (왼쪽) */}
+              <g>
+                <rect x={20} y={100} width={180} height={((valueChainData[Object.keys(valueChainData)[0]]).length+1)*70} rx={8} fill="#f97316" opacity={0.1} stroke="#f97316" strokeWidth={2} />
+                <text x={110} y={125} textAnchor="middle" fill="#f97316" fontSize="14" fontWeight="bold">
+                  상류 (공급업체)
+                </text>
+                
+                {valueChainData.upstream.map((company, index) => {
+                  const y = 160 + index * 70;
+                  return (
+                    <g key={`upstream-${index}`}>
+                      <rect x={35} y={y} width={150} height={50} rx={6} fill="#18181b" stroke="#f97316" strokeWidth={1.5} />
+                      <text x={110} y={y + 20} textAnchor="middle" fill="white" fontSize="15" fontWeight="500">
+                        {company.name}
+                      </text>
+                      <text x={110} y={y + 38} textAnchor="middle" fill="#a1a1aa" fontSize="10">
+                        {company.category}
+                      </text>
+                      {/* 연결선 */}
+                      <line
+                        x1={201}
+                        y1={250}
+                        x2={310}
+                        y2={250}
+                        stroke="#f97316"
+                        strokeWidth={1.5}
+                        opacity={0.5}
+                      />
+                    </g>
+                  );
+                })}
+              </g>
 
-  return (
-    <div className="mb-6">
-      <h3 className="text-sm text-zinc-400 mb-3">가치사슬 네트워크</h3>
-      <div className="bg-zinc-900 rounded-2xl p-4">
-        <PinchZoom>
-          <svg viewBox="0 0 700 500" className="w-full h-auto" style={{ touchAction: "none" }}>
-            {/* 상류 박스 (왼쪽) */}
-            <g>
-              <rect x={20} y={100} width={180} height={280} rx={8} fill="#f97316" opacity={0.1} stroke="#f97316" strokeWidth={2} />
-              <text x={110} y={125} textAnchor="middle" fill="#f97316" fontSize="14" fontWeight="bold">
-                상류 (공급업체)
+              {/* 경쟁사 박스 (위) */}
+              <g>
+                <rect x={260} y={10} width={180} height={170} rx={8} fill="#3b82f6" opacity={0.1} stroke="#3b82f6" strokeWidth={2} strokeDasharray="5,5" />
+                <text x={350} y={30} textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">
+                  동일 산업 (경쟁사)
+                </text>
+                
+                {valueChainData.related.map((company, index) => {
+                  const y = 60 + index * 55;
+                  return (
+                    <g key={`related-${index}`}>
+                      <rect x={275} y={y} width={150} height={50} rx={6} fill="#18181b" stroke="#3b82f6" strokeWidth={1.5} strokeDasharray="3,3" />
+                      <text x={350} y={y + 24} textAnchor="middle" fill="white" fontSize="15" fontWeight="500">
+                        {company.name}
+                      </text>
+                      <text x={350} y={y + 40} textAnchor="middle" fill="#a1a1aa" fontSize="10">
+                        {company.category}
+                      </text>
+                      {/* 연결선 */}
+                      <line
+                        x1={350}
+                        y1={180}
+                        x2={350}
+                        y2={210}
+                        stroke="#3b82f6"
+                        strokeWidth={1.5}
+                        strokeDasharray="5,5"
+                        opacity={0.4}
+                      />
+                    </g>
+                  );
+                })}
+              </g>
+
+              {/* 중심 (중앙) */}
+              <circle cx={350} cy={250} r={40} fill="#3b82f6" stroke="white" strokeWidth={3} />
+              <text x={350} y={250} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16" fontWeight="bold">
+                {selectedStock.name}
               </text>
 
-              {valueChainData.upstream.map((company, index) => {
-                const y = 160 + index * 70;
-                return (
-                  <g key={`upstream-${index}`}>
-                    <rect x={35} y={y} width={150} height={50} rx={6} fill="#18181b" stroke="#f97316" strokeWidth={1.5} />
-                    <text x={110} y={y + 20} textAnchor="middle" fill="white" fontSize="15" fontWeight="500">
-                      {company.name}
-                    </text>
-                    <text x={110} y={y + 38} textAnchor="middle" fill="#a1a1aa" fontSize="10">
-                      {company.category}
-                    </text>
-                    <line x1={201} y1={250} x2={310} y2={250} stroke="#f97316" strokeWidth={1.5} opacity={0.5} />
-                  </g>
-                );
-              })}
-            </g>
+              {/* 하류 박스 (오른쪽) */}
+              <g>
+                <rect x={500} y={100} width={180} height={280} rx={8} fill="#10b981" opacity={0.1} stroke="#10b981" strokeWidth={2} />
+                <text x={590} y={125} textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">
+                  하류 (고객사)
+                </text>
+                
+                {valueChainData.downstream.map((company, index) => {
+                  const y = 160 + index * 70;
+                  return (
+                    <g key={`downstream-${index}`}>
+                      <rect x={515} y={y} width={150} height={50} rx={6} fill="#18181b" stroke="#10b981" strokeWidth={1.5} />
+                      <text x={590} y={y + 22} textAnchor="middle" fill="white" fontSize="15" fontWeight="500">
+                        {company.name}
+                      </text>
+                      <text x={590} y={y + 40} textAnchor="middle" fill="#a1a1aa" fontSize="10">
+                        {company.category}
+                      </text>
+                      {/* 연결선 */}
+                      <line
+                        x1={392}
+                        y1={250}
+                        x2={499}
+                        y2={250}
+                        stroke="#10b981"
+                        strokeWidth={1.5}
+                        opacity={0.4}
+                      />
+                    </g>
+                  );
+                })}
+              </g>
 
-            {/* 경쟁사 박스 (위) */}
-            <g>
-              <rect x={260} y={10} width={180} height={170} rx={8} fill="#3b82f6" opacity={0.1} stroke="#3b82f6" strokeWidth={2} strokeDasharray="5,5" />
-              <text x={350} y={30} textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">
-                동일 산업 (경쟁사)
-              </text>
-
-              {valueChainData.related.map((company, index) => {
-                const y = 60 + index * 55;
-                return (
-                  <g key={`related-${index}`}>
-                    <rect x={275} y={y} width={150} height={50} rx={6} fill="#18181b" stroke="#3b82f6" strokeWidth={1.5} strokeDasharray="3,3" />
-                    <text x={350} y={y + 24} textAnchor="middle" fill="white" fontSize="15" fontWeight="500">
-                      {company.name}
-                    </text>
-                    <text x={350} y={y + 40} textAnchor="middle" fill="#a1a1aa" fontSize="10">
-                      {company.category}
-                    </text>
-                    <line x1={350} y1={180} x2={350} y2={210} stroke="#3b82f6" strokeWidth={1.5} strokeDasharray="5,5" opacity={0.4} />
-                  </g>
-                );
-              })}
-            </g>
-
-            {/* 중심 */}
-            <circle cx={350} cy={250} r={40} fill="#3b82f6" stroke="white" strokeWidth={3} />
-            <text x={350} y={250} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16" fontWeight="bold">
-              {selectedStock.name}
-            </text>
-
-            {/* 하류 박스 (오른쪽) */}
-            <g>
-              <rect x={500} y={100} width={180} height={280} rx={8} fill="#10b981" opacity={0.1} stroke="#10b981" strokeWidth={2} />
-              <text x={590} y={125} textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">
-                하류 (고객사)
-              </text>
-
-              {valueChainData.downstream.map((company, index) => {
-                const y = 160 + index * 70;
-                return (
-                  <g key={`downstream-${index}`}>
-                    <rect x={515} y={y} width={150} height={50} rx={6} fill="#18181b" stroke="#10b981" strokeWidth={1.5} />
-                    <text x={590} y={y + 22} textAnchor="middle" fill="white" fontSize="15" fontWeight="500">
-                      {company.name}
-                    </text>
-                    <text x={590} y={y + 40} textAnchor="middle" fill="#a1a1aa" fontSize="10">
-                      {company.category}
-                    </text>
-                    <line x1={392} y1={250} x2={499} y2={250} stroke="#10b981" strokeWidth={1.5} opacity={0.4} />
-                  </g>
-                );
-              })}
-            </g>
-
-            {/* 범례 */}
-            <g transform="translate(250, 460)">
-              <rect x={10} y={-10} width={12} height={12} fill="#f97316" opacity={0.3} stroke="#f97316" strokeWidth={1} />
-              <text x={27} y={0} fill="#ffffffff" fontSize="12">상류</text>
-
-              <rect x={70} y={-10} width={12} height={12} fill="#3b82f6" opacity={0.3} stroke="#3b82f6" strokeWidth={1} strokeDasharray="2,2" />
-              <text x={87} y={0} fill="#ffffffff" fontSize="12">경쟁사</text>
-
-              <rect x={140} y={-10} width={12} height={12} fill="#10b981" opacity={0.3} stroke="#10b981" strokeWidth={1} />
-              <text x={157} y={0} fill="#ffffffff" fontSize="12">하류</text>
-            </g>
-          </svg>
-        </PinchZoom>
+              {/* 범례 */}
+              <g transform="translate(250, 460)">
+                <rect x={10} y={-10} width={12} height={12} fill="#f97316" opacity={0.3} stroke="#f97316" strokeWidth={1} />
+                <text x={27} y={0} fill="#ffffffff" fontSize="12">상류</text>
+                
+                <rect x={70} y={-10} width={12} height={12} fill="#3b82f6" opacity={0.3} stroke="#3b82f6" strokeWidth={1} strokeDasharray="2,2" />
+                <text x={87} y={0} fill="#ffffffff" fontSize="12">경쟁사</text>
+                
+                <rect x={140} y={-10} width={12} height={12} fill="#10b981" opacity={0.3} stroke="#10b981" strokeWidth={1} />
+                <text x={157} y={0} fill="#ffffffff" fontSize="12">하류</text>
+              </g>
+            </svg>
+          </PinchZoom>
+        </div>
       </div>
-    </div>
-  );
-};
-
+    );
+  };
 
   const renderMainTabContent = () => {
     if (!selectedStock) return null;
@@ -480,10 +524,8 @@ const renderValueChainMindMap = () => {
             {/* 차트 */}
             <div>
               <h3 className="text-sm text-zinc-400 mb-3">최근 2주 추이</h3>
-              <div className="bg-zinc-900 rounded-2xl p-4 relative">
-                {/* 확대 대상 영역 고정 높이 */}
-                <PinchZoom className="h-64" showControls={false} maxScale={3}>
-                  <div className="w-full h-full">
+              <div className="bg-zinc-900 rounded-2xl p-4">
+                <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={priceData}>
                       <XAxis 
@@ -514,7 +556,6 @@ const renderValueChainMindMap = () => {
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-                </PinchZoom>
               </div>
             </div>
           </div>
@@ -636,6 +677,7 @@ const renderValueChainMindMap = () => {
           <div className="p-4 space-y-6">
             {/* 마인드맵 */}
             {renderValueChainMindMap()}
+            
             {/* 리스트 */}
             {/* Upstream */}
             <div>
@@ -708,101 +750,80 @@ const renderValueChainMindMap = () => {
           </div>
         );
 
-//   // 생성형 AI 가치사슬 시각화용 데이터 (더미 예시)
-//   const valueChainBlocks = [
-//     {
-//       name: 'END TO END 애플리케이션',
-//       example: '챗GPT, 미드저니',
-//       type: '스타트업 집중 영역',
-//       color: 'bg-orange-500/10 border-orange-400/40',
-//       colSpan: 2,
-//       rowSpan: 1,
-//     },
-//     {
-//       name: 'B2B, B2C 애플리케이션',
-//       type: '스타트업 집중 영역',
-//       color: 'bg-orange-500/10 border-orange-400/40',
-//     },
-//     {
-//       name: '클로즈드 소스 기반 파운데이션 모델',
-//       example: 'GPT-4',
-//       type: '대기업 집중 영역',
-//       color: 'bg-green-500/10 border-green-400/40',
-//     },
-//     {
-//       name: '파운데이션 모델 허브',
-//       example: '허깅페이스',
-//       type: '스타트업 집중 영역',
-//       color: 'bg-orange-500/10 border-orange-400/40',
-//     },
-//     {
-//       name: '오픈 소스 기반 파운데이션 모델',
-//       example: '알파카, 파이시아',
-//       type: '대기업 집중 영역',
-//       color: 'bg-green-500/10 border-green-400/40',
-//     },
-//     {
-//       name: '클라우드 플랫폼',
-//       example: 'AWS, AZURE',
-//       type: '대기업 집중 영역',
-//       color: 'bg-green-500/10 border-green-400/40',
-//     },
-//     {
-//       name: '컴퓨팅 하드웨어',
-//       example: 'GPU, TPU',
-//       type: '대기업 집중 영역',
-//       color: 'bg-zinc-700/30 border-zinc-500/50',
-//     },
-//   ];
+      default:
+        return null;
+    }
+  };
 
-//   return (
-//   <div className="p-4 space-y-6">
-//     <h3 className="text-sm text-zinc-400 mb-4">생성형 AI 가치사슬 (Value Chain)</h3>
+  const renderFinancialTabContent = () => {
+    if (!selectedStock) return null;
 
-//     {/* 🔍 줌인 가능한 시각화 영역 */}
-//     <PinchZoom>
-//       <div className="bg-zinc-900 rounded-2xl p-6 border border-zinc-700">
-//         <div className="grid grid-cols-3 gap-4">
-//           {valueChainBlocks.map((block, idx) => (
-//             <div
-//               key={idx}
-//               className={`rounded-xl p-4 border ${block.color} flex flex-col justify-between transition-all hover:scale-[1.02] hover:bg-zinc-800/50`}
-//               style={{
-//                 gridColumn: block.colSpan ? `span ${block.colSpan}` : 'span 1',
-//                 gridRow: block.rowSpan ? `span ${block.rowSpan}` : 'span 1',
-//               }}
-//             >
-//               <div>
-//                 <div className="text-sm font-semibold mb-2 text-white">
-//                   {block.name}
-//                 </div>
-//                 {block.example && (
-//                   <div className="text-xs text-zinc-400">
-//                     예: {block.example}
-//                   </div>
-//                 )}
-//               </div>
-//               <div className="text-[11px] mt-3 text-zinc-500 italic">
-//                 {block.type}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </PinchZoom>
+    switch (selectedFinancialTab) {
+      case 'revenue':
+        return (
+          <div className="p-4 space-y-6">
+            <div className="mb-4">
+              <h3 className="text-sm text-zinc-400 mb-2">사업부문별 매출 비중</h3>
+              <p className="text-xs text-zinc-500">2024년 3분기 기준</p>
+            </div>
 
-//     {/* 설명 */}
-//     <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-sm text-zinc-300 leading-relaxed">
-//       <p className="mb-2">
-//         생성형 AI의 가치사슬은 하드웨어 → 플랫폼 → 파운데이션 모델 → 애플리케이션으로 이어집니다.
-//       </p>
-//       <p>
-//         스타트업은 주로 애플리케이션 영역에, 대기업은 인프라 및 모델 레벨에 집중하는 경향을 보입니다.
-//       </p>
-//     </div>
-//   </div>
-// );
+            {/* 도넛 차트 */}
+            <div className="bg-zinc-900 rounded-2xl p-6">
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={revenueData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={120}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {revenueData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#e0e0e0ff', 
+                        border: '1px solid #3f3f46',
+                        borderRadius: '8px',
+                        color: '#fff'
+                      }}
+                      formatter={(value: number) => `${value}%`}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
 
+              {/* 범례 */}
+              <div className="space-y-2 mt-4">
+                {revenueData.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-sm">{item.name}</span>
+                    </div>
+                    <span className="text-sm">{item.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 상세 설명 */}
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+              <div className="text-sm text-zinc-300 leading-relaxed">
+                <p className="mb-2">반도체 부문이 전체 매출의 58.2%를 차지하며 주력 사업으로 자리잡고 있습니다.</p>
+                <p>모바일(IM) 부문은 24.5%로 두 번째로 큰 비중을 차지하고 있습니다.</p>
+              </div>
+            </div>
+          </div>
+        );
 
       case 'income':
         return (
@@ -887,76 +908,6 @@ const renderValueChainMindMap = () => {
         return null;
     }
   };
-  
-  // --- 재무 탭 렌더링 함수 ---
-const renderFinancialTabContent = () => {
-  switch (selectedFinancialTab) {
-    case 'revenue':
-      return (
-        <div className="p-4 space-y-6">
-          <h3 className="text-sm text-zinc-400 mb-3">매출 비중</h3>
-          <div className="bg-zinc-900 rounded-2xl p-4 h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={revenueData}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={3}
-                >
-                  {revenueData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Legend />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#18181b',
-                    border: '1px solid #3f3f46',
-                    borderRadius: '8px',
-                    color: '#fff',
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      );
-
-    case 'income':
-      return (
-        <div className="p-4 space-y-6">
-          <h3 className="text-sm text-zinc-400 mb-3">손익계산서</h3>
-          <div className="bg-zinc-900 rounded-2xl p-4 h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={incomeData}>
-                <XAxis dataKey="quarter" stroke="#71717a" />
-                <YAxis stroke="#71717a" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#18181b',
-                    border: '1px solid #3f3f46',
-                    borderRadius: '8px',
-                    color: '#fff',
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="revenue" fill="#3b82f6" />
-                <Bar dataKey="operatingProfit" fill="#8b5cf6" />
-                <Bar dataKey="netIncome" fill="#10b981" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      );
-
-    default:
-      return null;
-  }
-};
-
 
   return (
     <div className="min-h-screen bg-black text-white pb-20 flex flex-col">

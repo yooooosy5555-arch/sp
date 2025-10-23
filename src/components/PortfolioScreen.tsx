@@ -6,91 +6,89 @@ import { Button } from './ui/button';
 export function PortfolioScreen() {
   const [selectedView, setSelectedView] = useState<'overview' | 'detailed'>('overview');
   
-  const totalAssets = 25000264;
-  const totalReturn = -3.72;
-  const totalInvestment = 25965432;
+  const totalAssets = 345680000;
+  const totalInvestment = 300000000;
   const totalProfit = totalAssets - totalInvestment;
   const totalProfitRate = (totalProfit / totalInvestment) * 100;
+  const totalReturn = totalProfitRate;
 
   const portfolioData = [
     { 
       name: 'AAPL', 
       fullName: 'Apple Inc.',
-      value: 47.8, 
-      amount: 11960126,
-      quantity: 50,
+      value: 35.2, 
+      amount: 121680000,
+      quantity: 500,
       avgPrice: 195.20,
-      currentPrice: 239.20,
-      change: 2.1,
-      profit: 2200000,
+      currentPrice: 243.36,
+      change: 24.7,
+      profit: 24080000,
       color: '#3b82f6',
+      market: 'NASDAQ'
+    },
+    { 
+      name: 'NVDA',
+      fullName: 'NVIDIA Corporation',
+      value: 28.5,
+      amount: 98518800,
+      quantity: 800,
+      avgPrice: 98.50,
+      currentPrice: 123.15,
+      change: 25.0,
+      profit: 19718800,
+      color: '#10b981',
+      market: 'NASDAQ'
+    },
+    { 
+      name: 'PLTR',
+      fullName: 'Palantir Technologies Inc.',
+      value: 18.3,
+      amount: 63259440,
+      quantity: 850,
+      avgPrice: 64500,
+      currentPrice: 74423,
+      change: 15.4,
+      profit: 8434440,
+      color: '#8b5cf6',
+      market: 'NASDAQ'
+    },
+    { 
+      name: 'F',
+      fullName: 'Ford Motor',
+      value: 12.5,
+      amount: 43210000,
+      quantity: 320,
+      avgPrice: 110000,
+      currentPrice: 135031,
+      change: 22.8,
+      profit: 8009920,
+      color: '#f59e0b',
       market: 'NASDAQ'
     },
     { 
       name: 'TSLA',
       fullName: 'Tesla Inc.',
-      value: 18.5,
-      amount: 4625049,
-      quantity: 20,
+      value: 5.5,
+      amount: 19011760,
+      quantity: 80,
       avgPrice: 245.50,
-      currentPrice: 231.25,
-      change: -1.5,
-      profit: -285000,
+      currentPrice: 237.65,
+      change: -3.2,
+      profit: -628000,
       color: '#ef4444',
       market: 'NASDAQ'
-    },
-    { 
-      name: 'GOOGL',
-      fullName: 'Alphabet Inc.',
-      value: 16.9,
-      amount: 4225045,
-      quantity: 30,
-      avgPrice: 138.50,
-      currentPrice: 140.83,
-      change: 0.8,
-      profit: 69900,
-      color: '#f59e0b',
-      market: 'NASDAQ'
-    },
-    { 
-      name: 'SK하이닉스',
-      fullName: 'SK hynix',
-      code: '000660',
-      value: 8.9,
-      amount: 2225023,
-      quantity: 18,
-      avgPrice: 118000,
-      currentPrice: 123612,
-      change: 3.2,
-      profit: 101016,
-      color: '#10b981',
-      market: 'KOSPI'
-    },
-    { 
-      name: '삼성전자',
-      fullName: 'Samsung Electronics',
-      code: '005930',
-      value: 7.9,
-      amount: 1975021,
-      quantity: 27,
-      avgPrice: 74500,
-      currentPrice: 73148,
-      change: -0.5,
-      profit: -36504,
-      color: '#8b5cf6',
-      market: 'KOSPI'
     },
   ];
 
   // 일별 수익률 데이터 (최근 7일)
   const dailyPerformance = [
-    { date: '10/11', value: -2.1 },
-    { date: '10/12', value: 0.5 },
-    { date: '10/13', value: -1.2 },
-    { date: '10/14', value: 1.8 },
-    { date: '10/15', value: 0.3 },
-    { date: '10/16', value: -0.8 },
-    { date: '10/17', value: -3.72 },
+    { date: '10/11', value: 12.8 },
+    { date: '10/12', value: 13.2 },
+    { date: '10/13', value: 14.1 },
+    { date: '10/14', value: 14.8 },
+    { date: '10/15', value: 15.3 },
+    { date: '10/16', value: 14.9 },
+    { date: '10/17', value: 15.2 },
   ];
 
   return (
@@ -178,11 +176,14 @@ export function PortfolioScreen() {
                   stroke="#71717a"
                   tick={{ fill: '#71717a', fontSize: 12 }}
                 />
-                <Bar 
-                  dataKey="value" 
-                  fill={(entry) => entry.value >= 0 ? '#ef4444' : '#3b82f6'}
-                  radius={[4, 4, 0, 0]}
-                />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                  {dailyPerformance.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.value >= 0 ? '#ef4444' : '#3b82f6'}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

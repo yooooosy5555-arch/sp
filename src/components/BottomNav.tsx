@@ -1,17 +1,17 @@
-import { Home, Radio, Eye, FileText, Search } from 'lucide-react';
+import {Home, User, Eye, FileText, Search } from 'lucide-react';
 
 interface BottomNavProps {
   currentScreen: string;
-  onNavigate: (screen: 'dashboard' | 'stockcast' | 'portfolio' | 'news' | 'search') => void;
+  onNavigate: (screen: 'dashboard' | 'portfolio' | 'news' | 'search' | 'profile') => void;
 }
 
 export function BottomNav({ currentScreen, onNavigate }: BottomNavProps) {
   const navItems = [
     { id: 'dashboard', icon: Home, label: '홈' },
     { id: 'search', icon: Search, label: '종목 알아보기' },
-    { id: 'stockcast', icon: Radio, label: 'StockCast' },
     { id: 'portfolio', icon: Eye, label: '포트폴리오' },
     { id: 'news', icon: FileText, label: '뉴스' },
+    { id: 'profile', icon: User, label: '마이' },
   ];
 
   return (

@@ -8,24 +8,30 @@ import { NewsScreen } from './components/NewsScreen';
 import { SearchScreen } from './components/SearchScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'profile' | 'dashboard' | 'stockpicker' | 'stockcast' | 'portfolio' | 'news' | 'search'>('login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userStocks, setUserStocks] = useState<any[]>([]);
+
   const handleLogin = () => {
     setIsAuthenticated(true);
     setCurrentScreen('dashboard');
   };
+
   const handleSignup = () => {
     setCurrentScreen('login');
   };
+
   const handleStockPickerComplete = (stocks: any[]) => {
     setUserStocks(stocks);
     setCurrentScreen('search');
   };
+
   const handleStockPickerSkip = () => {
     setCurrentScreen('search');
   };
+
   const renderScreen = () => {
     if (!isAuthenticated) {
       if (currentScreen === 'signup') {
@@ -33,9 +39,11 @@ export default function App() {
       }
       return <LoginScreen onLogin={handleLogin} onSignup={() => setCurrentScreen('signup')} />;
     }
+
     if (currentScreen === 'stockpicker') {
       return <StockPickerScreen onComplete={handleStockPickerComplete} onSkip={handleStockPickerSkip} />;
     }
+
     switch (currentScreen) {
       case 'portfolio':
         return <PortfolioScreen />;
@@ -49,6 +57,7 @@ export default function App() {
         return <DashboardScreen />;
     }
   };
+
   return (
     <div className="min-h-screen bg-black">
       <div className="mx-auto max-w-md h-screen flex flex-col">
