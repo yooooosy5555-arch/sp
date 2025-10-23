@@ -350,7 +350,7 @@ export function SearchScreen() {
             <svg viewBox="0 0 700 500" className="w-full h-auto">
               {/* 상류 박스 (왼쪽) */}
               <g>
-                <rect x={20} y={100} width={180} height={((valueChainData[Object.keys(valueChainData)[0]]).length+1)*70} rx={8} fill="#f97316" opacity={0.1} stroke="#f97316" strokeWidth={2} />
+                <rect x={20} y={100} width={180} height={((valueChainData['upstream']).length+1)*70} rx={8} fill="#f97316" opacity={0.1} stroke="#f97316" strokeWidth={2} />
                 <text x={110} y={125} textAnchor="middle" fill="#f97316" fontSize="14" fontWeight="bold">
                   상류 (공급업체)
                 </text>
