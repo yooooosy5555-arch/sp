@@ -102,11 +102,6 @@ export function DashboardScreen(): JSX.Element {
                     <span>{post.comments}</span>
                   </div>
                   <span>❤️ {post.likes}</span>
-                  {'tag' in post && post.tag && (
-                    <span className="ml-auto text-blue-400 text-[11px] border border-blue-400/30 rounded-full px-2 py-0.5">
-                      #{post.tag}
-                    </span>
-                  )}
                 </div>
               </div>
             ))}
