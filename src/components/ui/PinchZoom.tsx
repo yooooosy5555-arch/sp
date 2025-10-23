@@ -8,7 +8,6 @@ interface PinchZoomProps {
 export const PinchZoom: React.FC<PinchZoomProps> = ({ children, maxScale = 3 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scale = useRef(1);
-  const lastDistance = useRef(0);
   const translate = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
