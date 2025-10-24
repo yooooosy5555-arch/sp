@@ -285,54 +285,92 @@ export function SearchScreen() {
   
   // 연관어 워드맵 렌더링
   const renderKeywordWordMap = () => {
-    // 워드 클라우드 배치 알고리즘
-    const maxCount = Math.max(...keywords.map(k => k.count));
-    
+    // 캔버스 크기 (viewBox 기준, 컨테이너는 w-full로 자동 리사이즈)
+    const WIDTH = 700;
+    const HEIGHT = 500;
+    // 여백과 글자 크기 범위 (필요하면 숫자 살짝만 조정)
+    const PADDING = 7;
+    const MIN_FONT = 12;
+    const MAX_FONT = 60;
+    const maxCount = Math.max(...keywords.map(k => k.count)) || 1;
+    // 색상
+    const getColor = (trend: string) => {
+      if (trend === "up") return "#ef4444";
+      if (trend === "down") return "#3b82f6";
+      return "#a1a1aa";
+    };
+    // 직사각형 충돌 체크(간격 6px)
+    type Box = { x: number; y: number; w: number; h: number };
+    const boxes: Box[] = [];
+    const GAP = 35;
+    // 텍스트 배치 (겹치면 재시도)
+    const placed = keywords.map((k) => {
+      const size = Math.round(MIN_FONT + (k.count / maxCount) * (MAX_FONT - MIN_FONT));
+      // 텍스트 폭/높이 근사치 (영문/한글 섞임 감안해서 0.56~0.6 사이 계수)
+      const estW = Math.max(30, k.text.length * size * 0.58);
+      const estH = size * 1.2;
+      let x = 0, y = 0, tries = 0;
+      const maxTries = 250;
+      do {
+        x = PADDING + Math.random() * (WIDTH - 2 * PADDING - estW);
+        y = PADDING + Math.random() * (HEIGHT - 2 * PADDING - estH);
+        tries++;
+      } while (
+        boxes.some(b => !(
+          (x + estW + GAP) < b.x ||
+          (b.x + b.w + GAP) < x ||
+          (y + estH + GAP) < b.y ||
+          (b.y + b.h + GAP) < y
+        )) && tries < maxTries
+      );
+      // 실패 시 살짝 축소해서라도 넣기
+      if (tries >= maxTries) {
+        const shrink = 0.85;
+        const w2 = estW * shrink;
+        const h2 = estH * shrink;
+        x = PADDING + Math.random() * (WIDTH - 2 * PADDING - w2);
+        y = PADDING + Math.random() * (HEIGHT - 2 * PADDING - h2);
+        boxes.push({ x, y, w: w2, h: h2 });
+        return { x, y, size: size * shrink, color: getColor(k.trend), bold: k.trend === "up", text: k.text };
+      }
+      boxes.push({ x, y, w: estW, h: estH });
+      return { x, y, size, color: getColor(k.trend), bold: k.trend === "up", text: k.text };
+    });
     return (
       <div className="mb-6">
         <h3 className="text-sm text-zinc-400 mb-3">키워드 워드맵</h3>
-        <div className="bg-zinc-900 rounded-2xl p-6 relative" style={{ height: '300px' }}>
-          {keywords.map((keyword, index) => {
-            const size = 12 + (keyword.count / maxCount) * 24;
-            const positions = [
-              { x: 15, y: 20 },
-              { x: 65, y: 35 },
-              { x: 25, y: 60 },
-              { x: 75, y: 55 },
-              { x: 45, y: 80 },
-              { x: 10, y: 85 },
-              { x: 85, y: 75 },
-              { x: 55, y: 25 },
-              { x: 35, y: 45 },
-              { x: 70, y: 15 },
-            ];
-            
-            const pos = positions[index] || { x: Math.random() * 80 + 10, y: Math.random() * 80 + 10 };
-            
-            const getColor = () => {
-              if (keyword.trend === 'up') return '#ef4444';
-              if (keyword.trend === 'down') return '#3b82f6';
-              return '#71717a';
-            };
-            
-            return (
-              <button
-                key={index}
-                className="absolute transition-all hover:scale-110 cursor-pointer"
-                style={{
-                  left: `${pos.x}%`,
-                  top: `${pos.y}%`,
-                  fontSize: `${size}px`,
-                  color: getColor(),
-                  fontWeight: keyword.trend === 'up' ? 700 : 500,
-                  transform: 'translate(-50%, -50%)',
-                }}
-                onClick={() => alert(`"${keyword.text}" 관련 정보`)}
-              >
-                {keyword.text}
-              </button>
-            );
-          })}
+        <div
+          className="bg-zinc-900 rounded-2xl p-0 relative"
+          style={{
+            height: 320,
+            overflow: "hidden",
+            clipPath: "inset(0 round 1rem)"
+          }}
+        >
+          <PinchZoom maxScale={3} showControls={false}>
+            {/* SVG는 부모 크기에 맞춰지며 viewBox 좌표계로 정확히 배치됨 */}
+            <svg
+              viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+              className="block w-full h-full"
+              style={{ touchAction: "none" }}
+              preserveAspectRatio="xMidYMid meet"
+            >
+              {placed.map((p, i) => (
+                // y에는 글자 베이스라인 보정으로 + 폰트사이즈 주입
+                <text
+                  key={i}
+                  x={p.x}
+                  y={p.y + p.size}
+                  fontSize={p.size}
+                  fill={p.color}
+                  fontWeight={p.bold ? 700 : 500}
+                  style={{ whiteSpace: "pre" }}
+                >
+                  {keywords[i].text}
+                </text>
+              ))}
+            </svg>
+          </PinchZoom>
         </div>
       </div>
     );

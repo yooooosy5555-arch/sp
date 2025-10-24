@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { Plus, TrendingUp, TrendingDown, MoreVertical } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, MoreVertical, Play, ChevronDown, ChevronUp, Clock, Calendar, Tag  } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
-
+import { Button } from './ui/button';
 
 export function PortfolioScreen() {
-  const [selectedView, setSelectedView] = useState<'overview' | 'detailed'>('overview');
+  const [selectedView, setSelectedView] = useState<'video' | 'overview'>('video');
+  const [isScriptExpanded, setIsScriptExpanded] = useState(false);
   
   const totalAssets = 345680000;
   const totalInvestment = 300000000;
   const totalProfit = totalAssets - totalInvestment;
   const totalProfitRate = (totalProfit / totalInvestment) * 100;
-  // const totalReturn = totalProfitRate;
+  const totalReturn = totalProfitRate;
 
   const portfolioData = [
     { 
@@ -91,6 +92,26 @@ export function PortfolioScreen() {
     { date: '10/17', value: 15.2 },
   ];
 
+  // 영상 데이터
+  const videoData = {
+    title: "2025년 10월 포트폴리오 리밸런싱 전략",
+    date: "2025.10.24",
+    duration: "8:42",
+    videoId: '',
+    script: `스크립트`,
+    keyPoints: [
+      "기술주 비중 64%, 섹터 다변화 필요",
+      "NVIDIA 25% 수익, 일부 차익실현 고려",
+      "메모리 반도체 업황 개선 긍정적",
+      "Tesla 평단가 낮추기 전략 추천"
+    ],
+    relatedStocks: [
+      { name: "NVDA", change: 25.0, recommendation: "차익실현" },
+      { name: "AAPL", change: 24.7, recommendation: "보유" },
+      { name: "SK하이닉스", change: 22.8, recommendation: "보유" },
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-black text-white pb-20">
       {/* Header */}
@@ -98,6 +119,16 @@ export function PortfolioScreen() {
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl">포트폴리오</h1>
           <div className="flex gap-2">
+            <button
+              onClick={() => setSelectedView('video')}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                selectedView === 'video'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+              }`}
+            >
+              영상
+            </button>
             <button
               onClick={() => setSelectedView('overview')}
               className={`px-3 py-1 text-sm rounded-lg transition-colors ${
@@ -107,16 +138,6 @@ export function PortfolioScreen() {
               }`}
             >
               요약
-            </button>
-            <button
-              onClick={() => setSelectedView('detailed')}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                selectedView === 'detailed'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-              }`}
-            >
-              상세
             </button>
           </div>
         </div>
@@ -160,6 +181,81 @@ export function PortfolioScreen() {
             </div>
           </div>
         </div>
+
+        {/* Video Tab Content */}
+        {selectedView === 'video' && (
+          <div className="space-y-4">
+            {/* Video Header Info */}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h2 className="mb-2">{videoData.title}</h2>
+                <div className="flex items-center gap-3 text-sm text-zinc-400">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>{videoData.date}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{videoData.duration}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Video Player */}
+            <div className="relative w-full aspect-video bg-zinc-900 rounded-xl overflow-hidden">
+              <video
+                className="w-full h-full object-cover"
+                controls
+              >
+                <source src="/news_anchor_video.mp4" />
+                <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
+                  <div className="text-center">
+                    <Play className="w-16 h-16 text-zinc-600 mx-auto mb-2" />
+                    <p className="text-zinc-500 text-sm">영상을 불러올 수 없습니다</p>
+                  </div>
+                </div>
+              </video>
+            </div>
+
+            {/* Key Points */}
+            <div className="bg-zinc-900 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Tag className="w-4 h-4 text-blue-500" />
+                <h3 className="text-sm">핵심 포인트</h3>
+              </div>
+              <div className="space-y-2">
+                {videoData.keyPoints.map((point, index) => (
+                  <div key={index} className="flex items-start gap-2 text-sm">
+                    <span className="text-blue-500 shrink-0">•</span>
+                    <span className="text-zinc-300">{point}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Script Section */}
+            <div className="bg-zinc-900 rounded-xl p-4">
+              <button
+                onClick={() => setIsScriptExpanded(!isScriptExpanded)}
+                className="w-full flex items-center justify-between mb-3"
+              >
+                <h3 className="text-sm">영상 스크립트</h3>
+                {isScriptExpanded ? (
+                  <ChevronUp className="w-4 h-4 text-zinc-400" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-zinc-400" />
+                )}
+              </button>
+              
+              {isScriptExpanded && (
+                <div className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+                  {videoData.script}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Daily Performance Chart */}
         <div className="mb-4">
